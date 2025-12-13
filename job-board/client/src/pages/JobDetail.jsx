@@ -40,7 +40,7 @@ export default function JobDetail({ session }) {
       if (dbError) throw dbError;
 
       // 3. Send Email
-      await axios.post('http://localhost:5000/api/notify', {
+      await axios.post('http://https://job-board-api-rc22.onrender.com/api/notify', {
         employerEmail: job.profiles.email, 
         jobTitle: job.title,
         candidateName: session.user.email,
