@@ -4,7 +4,13 @@ const nodemailer = require('nodemailer');
 require('dotenv').config();
 
 const app = express();
-app.use(cors());
+
+// In the middleware section
+app.use(cors({
+    origin: '*', // Allow ALL domains (easiest for testing)
+    methods: ['GET', 'POST'],
+    credentials: true
+}));
 app.use(express.json());
 
 // Email Configuration
