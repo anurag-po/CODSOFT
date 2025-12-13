@@ -45,12 +45,12 @@ export default function JobDetail({ session }) {
 
       // 3. Send Email (Fail-safe)
       try {
-        await axios.post('https://job-board-api-rc22.onrender.com/api/notify', {
-          employerEmail: job.profiles.email, 
-          jobTitle: job.title,
-          candidateName: session.user.email,
-          resumeUrl
-        });
+        axios.post('https://job-board-api-rc22.onrender.com/api/notify', {
+        employerEmail: job.profiles.email, 
+        jobTitle: job.title,
+        candidateName: session.user.email,
+        resumeUrl
+      }).catch(err => console.warn("Background email failed", err));
         console.log("Email notification sent.");
       } catch (emailErr) {
         console.warn("Email failed to send, but application was saved.", emailErr);
