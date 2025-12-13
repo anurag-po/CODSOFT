@@ -27,7 +27,7 @@ export default function JobDetail({ session }) {
       // 1. Upload Resume
       const fileName = `${Date.now()}_${file.name}`;
       const { error: uploadError } = await supabase.storage.from('resumes').upload(fileName, file);
-      if (uploadError) throw uploadError;
+      if (uploadError) throw new Error('Resume Upload Failed: ' + uploadError.message);
 
       const resumeUrl = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/resumes/${fileName}`;
 
@@ -37,20 +37,30 @@ export default function JobDetail({ session }) {
         candidate_id: session.user.id,
         resume_url: resumeUrl
       });
-      if (dbError) throw dbError;
+      if (dbError) throw new Error('Database Error: ' + dbError.message);
 
-      // 3. Send Email
-      await axios.post('http://https://job-board-api-rc22.onrender.com/api/notify', {
-        employerEmail: job.profiles.email, 
-        jobTitle: job.title,
-        candidateName: session.user.email,
-        resumeUrl
-      });
+      // 3. Send Email (Wrapped in its own try/catch so it doesn't crash the app)
+      try {
+        await axios.post('https://job-board-api-rc22.onrender.com/api/notify', {
+          employerEmail: job.profiles.email, 
+          jobTitle: job.title,
+          candidateName: session.user.email,
+          resumeUrl
+        });
+        console.log("Email notification sent.");
+      } catch (emailErr) {
+        // We log the error but DO NOT stop the user success message
+        console.warn("Email failed to send, but application was saved.", emailErr);
+      }
 
+      // 4. Success Message (Even if email failed)
       toast.success('Application submitted successfully!');
-      setFile(null); // Reset file input
+      setFile(null); 
+      
     } catch (error) {
-      toast.error('Error applying: ' + error.message);
+      // This only runs if the RESUME or DATABASE failed
+      console.error(error);
+      toast.error(error.message);
     } finally {
       setLoading(false);
     }
