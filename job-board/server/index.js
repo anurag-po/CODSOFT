@@ -6,11 +6,7 @@ require('dotenv').config();
 const app = express();
 
 // In the middleware section
-app.use(cors({
-    origin: '*', // Allow ALL domains (easiest for testing)
-    methods: ['GET', 'POST'],
-    credentials: true
-}));
+app.use(cors({ origin: '*' }));
 app.use(express.json());
 
 // Email Configuration
