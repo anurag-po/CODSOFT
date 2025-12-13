@@ -20,12 +20,16 @@ export default function JobDetail({ session }) {
 
   const handleApply = async (e) => {
     e.preventDefault();
+    
+    // CHECKS
     if (!session) return toast.error('Please login to apply');
+    if (!file) return toast.error('Please upload a resume first.'); // <--- FIXED HERE
+
     setLoading(true);
 
     try {
       // 1. Upload Resume
-      const fileName = `${Date.now()}_${file.name}`;
+      const fileName = `${Date.now()}_${file.name}`; // Now safe because we checked 'file' exists
       const { error: uploadError } = await supabase.storage.from('resumes').upload(fileName, file);
       if (uploadError) throw new Error('Resume Upload Failed: ' + uploadError.message);
 
@@ -39,7 +43,7 @@ export default function JobDetail({ session }) {
       });
       if (dbError) throw new Error('Database Error: ' + dbError.message);
 
-      // 3. Send Email (Wrapped in its own try/catch so it doesn't crash the app)
+      // 3. Send Email (Fail-safe)
       try {
         await axios.post('https://job-board-api-rc22.onrender.com/api/notify', {
           employerEmail: job.profiles.email, 
@@ -49,16 +53,16 @@ export default function JobDetail({ session }) {
         });
         console.log("Email notification sent.");
       } catch (emailErr) {
-        // We log the error but DO NOT stop the user success message
         console.warn("Email failed to send, but application was saved.", emailErr);
       }
 
-      // 4. Success Message (Even if email failed)
+      // 4. Success!
       toast.success('Application submitted successfully!');
       setFile(null); 
+      // Optional: Clear the file input visually by resetting the form
+      e.target.reset();
       
     } catch (error) {
-      // This only runs if the RESUME or DATABASE failed
       console.error(error);
       toast.error(error.message);
     } finally {
