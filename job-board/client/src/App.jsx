@@ -73,6 +73,19 @@ export default function App() {
   const [session, setSession] = useState(null);
 
   useEffect(() => {
+    const wakeUpServer = async () => {
+      try {
+        // Just ping the server to wake it up. We don't care about the response.
+        await axios.get('https://job-board-api-rc22.onrender.com');
+        console.log("Server poked!");
+      } catch (error) {
+        // Ignore errors, it's just a wake-up call
+      }
+    };
+    wakeUpServer();
+  }, []);
+
+  useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
     });
