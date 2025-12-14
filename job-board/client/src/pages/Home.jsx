@@ -66,15 +66,15 @@ export default function Home() {
         <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-gray-100">
                 <div>
-                    <div className="text-3xl font-bold text-gray-900">10k+</div>
+                    <div className="text-3xl font-bold text-gray-900">Now Growing</div>
                     <div className="text-sm text-gray-500 mt-1">Active Jobs</div>
                 </div>
                 <div>
-                    <div className="text-3xl font-bold text-gray-900">500+</div>
+                    <div className="text-3xl font-bold text-gray-900">Inviting</div>
                     <div className="text-sm text-gray-500 mt-1">Companies</div>
                 </div>
                 <div>
-                    <div className="text-3xl font-bold text-gray-900">1M+</div>
+                    <div className="text-3xl font-bold text-gray-900">Inviting</div>
                     <div className="text-sm text-gray-500 mt-1">Candidates</div>
                 </div>
                 <div>
