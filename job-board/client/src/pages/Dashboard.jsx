@@ -28,7 +28,7 @@ export default function Dashboard({ session }) {
   const fetchAllData = async () => {
     try {
       setLoading(true);
-      // 1. Fetch Profile
+      // Fetch Profile
       const { data: profileData } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
       setProfile(profileData);
       setProfileForm({ 
@@ -37,7 +37,7 @@ export default function Dashboard({ session }) {
         website: profileData.website || '' 
       });
 
-      // 2. Fetch Role-Specific Data
+      //Fetch Role-Specific Data
       if (profileData.role === 'employer') {
           await fetchEmployerData();
       } else {
@@ -50,7 +50,7 @@ export default function Dashboard({ session }) {
     }
   };
 
-  // --- DATA FETCHING ---
+  
   const fetchEmployerData = async () => {
     // Get Jobs
     const { data: jobData } = await supabase.from('jobs').select('*').eq('employer_id', session.user.id).order('created_at', { ascending: false });
@@ -73,14 +73,14 @@ export default function Dashboard({ session }) {
     setMyApplications(data || []);
   };
 
-  // --- PROFILE UPDATES ---
+  
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
     try {
         setUploading(true);
         let avatarUrl = profile.avatar_url;
 
-        // 1. Upload Avatar if selected
+       
         if (avatarFile) {
             const fileName = `${session.user.id}-${Date.now()}`;
             const { error: uploadError } = await supabase.storage.from('avatars').upload(fileName, avatarFile);
@@ -88,7 +88,7 @@ export default function Dashboard({ session }) {
             avatarUrl = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/avatars/${fileName}`;
         }
 
-        // 2. Update Profile Table
+        //Update Profile Table
         const { error } = await supabase.from('profiles').update({
             full_name: profileForm.full_name,
             username: profileForm.username,
@@ -107,7 +107,7 @@ export default function Dashboard({ session }) {
     }
   };
 
-  // --- JOB HANDLERS ---
+  
   const handleJobSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -136,12 +136,12 @@ export default function Dashboard({ session }) {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 space-y-8">
       
-      {/* --- SECTION 1: PROFILE CARD --- */}
+      
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div className="bg-gradient-to-r from-blue-600 to-indigo-700 h-32"></div>
         <div className="px-6 pb-6 relative">
             
-            {/* FIXED: Avatar with VISIBLE Camera Button */}
+            
             <div className="relative -mt-12 mb-4 inline-block">
                 <img 
                     src={avatarFile ? URL.createObjectURL(avatarFile) : (profile.avatar_url || `https://ui-avatars.com/api/?name=${profile.email}&background=random`)} 
@@ -149,14 +149,14 @@ export default function Dashboard({ session }) {
                     className="w-24 h-24 rounded-full border-4 border-white object-cover shadow-md bg-white"
                 />
                 <label className="absolute bottom-0 right-0 bg-white p-2 rounded-full shadow-lg border border-gray-200 cursor-pointer hover:bg-gray-50 text-gray-600 transition-colors">
-                    {/* Camera Icon */}
+                    
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                     <input type="file" className="hidden" accept="image/*" onChange={(e) => setAvatarFile(e.target.files[0])} />
                 </label>
             </div>
 
             <div className="flex justify-between items-end">
-                {/* Profile Inputs */}
+                
                 <div className="w-full max-w-2xl grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
                     <div>
                         <label className="text-xs font-bold text-gray-500 uppercase">Full Name</label>
@@ -178,7 +178,7 @@ export default function Dashboard({ session }) {
                     </div>
                 </div>
 
-                 {/* Save Button */}
+                 
                 <button 
                     onClick={handleProfileUpdate}
                     disabled={uploading}
@@ -191,9 +191,9 @@ export default function Dashboard({ session }) {
       </div>
 
 
-      {/* --- SECTION 2: ROLE SPECIFIC CONTENT --- */}
       
-      {/* === CANDIDATE VIEW === */}
+      
+      {/* Candidate view */}
       {profile.role !== 'employer' && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
              <h2 className="text-xl font-bold text-gray-800 mb-6">My Applications</h2>
@@ -214,11 +214,11 @@ export default function Dashboard({ session }) {
         </div>
       )}
 
-      {/* === EMPLOYER VIEW === */}
+      {/* Emploer view */}
       {profile.role === 'employer' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             
-            {/* Left Col: Job Creator */}
+            
             <div className="lg:col-span-1 bg-white p-6 rounded-xl shadow-sm border border-gray-200 h-fit sticky top-4">
                 <h3 className="font-bold text-lg mb-4">{editingJobId ? 'Edit Job' : 'Post New Job'}</h3>
                 <form onSubmit={handleJobSubmit} className="space-y-4">
@@ -233,10 +233,10 @@ export default function Dashboard({ session }) {
                 </form>
             </div>
 
-            {/* Right Col: Applications & Jobs List */}
+            
             <div className="lg:col-span-2 space-y-8">
                 
-                {/* 1. Applications Received */}
+                {/* Applications Received */}
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                     <div className="bg-gray-50 px-6 py-3 border-b font-bold text-gray-700 flex justify-between">
                         <span>Inbox ({applications.length})</span>
@@ -245,7 +245,7 @@ export default function Dashboard({ session }) {
                         {applications.map(app => (
                             <div key={app.id} className="p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between hover:bg-blue-50 transition-colors gap-4">
                                 
-                                {/* FIXED: THIS IS NOW A BUTTON, NOT TEXT */}
+                                
                                 <button 
                                     className="flex items-center gap-3 text-left group w-full sm:w-auto"
                                     onClick={() => setSelectedCandidate(app)}
@@ -273,7 +273,7 @@ export default function Dashboard({ session }) {
                     </div>
                 </div>
 
-                {/* 2. Active Jobs List */}
+                
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                     <h3 className="font-bold text-gray-800 mb-4">Your Posted Jobs</h3>
                     <div className="space-y-3">
@@ -295,7 +295,7 @@ export default function Dashboard({ session }) {
         </div>
       )}
 
-      {/* --- MODAL: CANDIDATE PROFILE POPUP --- */}
+      
       {selectedCandidate && (
         <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 backdrop-blur-sm" onClick={() => setSelectedCandidate(null)}>
             <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl transform transition-all scale-100 animate-in fade-in zoom-in duration-200" onClick={e => e.stopPropagation()}>
