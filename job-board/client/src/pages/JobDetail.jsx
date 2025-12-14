@@ -10,12 +10,12 @@ export default function JobDetail({ session }) {
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
   
-  // NEW: State for Company Modal
+ 
   const [showCompanyModal, setShowCompanyModal] = useState(false);
 
   useEffect(() => {
     const getJob = async () => {
-      // UPDATED QUERY: Fetch ALL profile details (avatar, name, etc), not just email
+      
       const { data } = await supabase
         .from('jobs')
         .select('*, profiles(*)') 
@@ -29,21 +29,21 @@ export default function JobDetail({ session }) {
   const handleApply = async (e) => {
     e.preventDefault();
     
-    // CHECKS
+    // checking
     if (!session) return toast.error('Please login to apply');
     if (!file) return toast.error('Please upload a resume first.');
 
     setLoading(true);
 
     try {
-      // 1. Upload Resume
+      
       const fileName = `${Date.now()}_${file.name}`;
       const { error: uploadError } = await supabase.storage.from('resumes').upload(fileName, file);
       if (uploadError) throw new Error('Resume Upload Failed: ' + uploadError.message);
 
       const resumeUrl = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/resumes/${fileName}`;
 
-      // 2. Create Application Record
+      
       const { error: dbError } = await supabase.from('applications').insert({
         job_id: job.id,
         candidate_id: session.user.id,
@@ -51,7 +51,7 @@ export default function JobDetail({ session }) {
       });
       if (dbError) throw new Error('Database Error: ' + dbError.message);
 
-      // 3. Send Email (Fail-safe)
+      
       try {
         axios.post('https://job-board-api-rc22.onrender.com/api/notify', {
           employerEmail: job.profiles.email, 
@@ -63,7 +63,7 @@ export default function JobDetail({ session }) {
         console.warn("Email logic skipped");
       }
 
-      // 4. Success!
+      
       toast.success('Application submitted successfully!');
       setFile(null); 
       e.target.reset();
@@ -76,7 +76,7 @@ export default function JobDetail({ session }) {
     }
   };
 
-  // SKELETON LOADER
+  
   if (!job) return (
     <div className="max-w-5xl mx-auto px-4 py-8 animate-pulse">
         <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
@@ -88,7 +88,7 @@ export default function JobDetail({ session }) {
     </div>
   );
 
-  // Helper to get company info safely
+  //  get company info 
   const employer = job.profiles || {};
   const companyName = employer.full_name || job.company || 'Confidential Company';
 
@@ -102,7 +102,7 @@ export default function JobDetail({ session }) {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
         
-        {/* LEFT COLUMN: Job Details */}
+        
         <div className="md:col-span-2 space-y-6">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
             <div className="flex justify-between items-start">
@@ -110,7 +110,7 @@ export default function JobDetail({ session }) {
                     <h1 className="text-3xl font-bold text-gray-900 mb-2">{job.title}</h1>
                     <div className="flex flex-wrap gap-4 text-sm text-gray-500 mb-6">
                         
-                        {/* CLICKABLE COMPANY NAME */}
+                        {/* Company Name is a button to show company details*/}
                         <button 
                             onClick={() => setShowCompanyModal(true)}
                             className="flex items-center hover:text-blue-600 hover:underline transition-colors group"
@@ -129,7 +129,7 @@ export default function JobDetail({ session }) {
                         </span>
                     </div>
                 </div>
-                {/* Job Type Badge */}
+                
                 <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm font-semibold border border-blue-100">
                     {job.type || 'Full-time'}
                 </span>
@@ -144,7 +144,7 @@ export default function JobDetail({ session }) {
           </div>
         </div>
 
-        {/* RIGHT COLUMN: Application Form (Sticky) */}
+        
         <div className="md:col-span-1 sticky top-24">
           <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
             <h3 className="text-xl font-bold text-gray-900 mb-2">Apply for this position</h3>
@@ -198,7 +198,7 @@ export default function JobDetail({ session }) {
         </div>
       </div>
 
-      {/* --- COMPANY DETAILS MODAL --- */}
+      
       {showCompanyModal && (
         <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 backdrop-blur-sm" onClick={() => setShowCompanyModal(false)}>
             <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl transform transition-all scale-100 animate-in fade-in zoom-in duration-200" onClick={e => e.stopPropagation()}>
@@ -225,7 +225,7 @@ export default function JobDetail({ session }) {
                         )}
                         <div className="bg-gray-50 p-3 rounded-lg text-xs leading-relaxed">
                             <span className="font-bold block mb-1 text-gray-700">About the Employer:</span>
-                            {/* If they have a bio, show it, otherwise generic text */}
+                            
                             This company is a verified employer on our platform. They have posted this job opportunity and are actively looking for candidates like you.
                         </div>
                     </div>
