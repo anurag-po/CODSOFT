@@ -18,7 +18,7 @@ export default function Dashboard({ session }) {
   const [jobForm, setJobForm] = useState({ title: '', description: '', company: '', location: '', type: 'Full-time' });
   const [editingJobId, setEditingJobId] = useState(null);
   
-  // Modal State (For Employer viewing Candidate)
+  // Modal State
   const [selectedCandidate, setSelectedCandidate] = useState(null);
 
   useEffect(() => {
@@ -107,7 +107,7 @@ export default function Dashboard({ session }) {
     }
   };
 
-  // --- JOB HANDLERS (Simplified) ---
+  // --- JOB HANDLERS ---
   const handleJobSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -136,61 +136,56 @@ export default function Dashboard({ session }) {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 space-y-8">
       
-      {/* --- SECTION 1: PROFILE CARD (Visible to Everyone) --- */}
+      {/* --- SECTION 1: PROFILE CARD --- */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div className="bg-gradient-to-r from-blue-600 to-indigo-700 h-32"></div>
         <div className="px-6 pb-6 relative">
-            {/* Avatar Image */}
-            <div className="relative -mt-12 mb-4 flex justify-between items-end">
-                <div className="relative group">
-                    <img 
-                        src={profile.avatar_url || `https://ui-avatars.com/api/?name=${profile.email}&background=random`} 
-                        alt="Profile" 
-                        className="w-24 h-24 rounded-full border-4 border-white object-cover shadow-md bg-white"
-                    />
-                    <label className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white opacity-0 group-hover:opacity-100 rounded-full cursor-pointer transition-opacity text-xs font-bold">
-                        Change
-                        <input type="file" className="hidden" accept="image/*" onChange={(e) => setAvatarFile(e.target.files[0])} />
-                    </label>
+            
+            {/* FIXED: Avatar with VISIBLE Camera Button */}
+            <div className="relative -mt-12 mb-4 inline-block">
+                <img 
+                    src={avatarFile ? URL.createObjectURL(avatarFile) : (profile.avatar_url || `https://ui-avatars.com/api/?name=${profile.email}&background=random`)} 
+                    alt="Profile" 
+                    className="w-24 h-24 rounded-full border-4 border-white object-cover shadow-md bg-white"
+                />
+                <label className="absolute bottom-0 right-0 bg-white p-2 rounded-full shadow-lg border border-gray-200 cursor-pointer hover:bg-gray-50 text-gray-600 transition-colors">
+                    {/* Camera Icon */}
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    <input type="file" className="hidden" accept="image/*" onChange={(e) => setAvatarFile(e.target.files[0])} />
+                </label>
+            </div>
+
+            <div className="flex justify-between items-end">
+                {/* Profile Inputs */}
+                <div className="w-full max-w-2xl grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                    <div>
+                        <label className="text-xs font-bold text-gray-500 uppercase">Full Name</label>
+                        <input 
+                            className="w-full border-b border-gray-300 py-1 focus:border-blue-600 outline-none text-gray-900 font-medium" 
+                            value={profileForm.full_name} 
+                            onChange={e => setProfileForm({...profileForm, full_name: e.target.value})} 
+                            placeholder="Enter your name"
+                        />
+                    </div>
+                    <div>
+                        <label className="text-xs font-bold text-gray-500 uppercase">Username / Title</label>
+                        <input 
+                            className="w-full border-b border-gray-300 py-1 focus:border-blue-600 outline-none text-gray-900" 
+                            value={profileForm.username} 
+                            onChange={e => setProfileForm({...profileForm, username: e.target.value})} 
+                            placeholder="@username or Job Title"
+                        />
+                    </div>
                 </div>
-                {/* Save Button */}
+
+                 {/* Save Button */}
                 <button 
                     onClick={handleProfileUpdate}
                     disabled={uploading}
-                    className="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 disabled:opacity-50"
+                    className="mb-2 bg-gray-900 text-white px-6 py-2 rounded-lg text-sm font-bold hover:bg-gray-800 disabled:opacity-50 shadow"
                 >
                     {uploading ? 'Saving...' : 'Save Changes'}
                 </button>
-            </div>
-
-            {/* Profile Inputs */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label className="text-xs font-bold text-gray-500 uppercase">Full Name</label>
-                    <input 
-                        className="w-full border-b border-gray-300 py-1 focus:border-blue-600 outline-none text-gray-900 font-medium" 
-                        value={profileForm.full_name} 
-                        onChange={e => setProfileForm({...profileForm, full_name: e.target.value})} 
-                        placeholder="Enter your name"
-                    />
-                </div>
-                <div>
-                    <label className="text-xs font-bold text-gray-500 uppercase">Username / Title</label>
-                    <input 
-                        className="w-full border-b border-gray-300 py-1 focus:border-blue-600 outline-none text-gray-900" 
-                        value={profileForm.username} 
-                        onChange={e => setProfileForm({...profileForm, username: e.target.value})} 
-                        placeholder="@username or Job Title"
-                    />
-                </div>
-                <div>
-                    <label className="text-xs font-bold text-gray-500 uppercase">Email (Read Only)</label>
-                    <div className="text-gray-500 py-1">{session.user.email}</div>
-                </div>
-                <div>
-                    <label className="text-xs font-bold text-gray-500 uppercase">Role</label>
-                    <div className="capitalize text-blue-600 font-bold py-1">{profile.role}</div>
-                </div>
             </div>
         </div>
       </div>
@@ -224,7 +219,7 @@ export default function Dashboard({ session }) {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             
             {/* Left Col: Job Creator */}
-            <div className="lg:col-span-1 bg-white p-6 rounded-xl shadow-sm border border-gray-200 h-fit">
+            <div className="lg:col-span-1 bg-white p-6 rounded-xl shadow-sm border border-gray-200 h-fit sticky top-4">
                 <h3 className="font-bold text-lg mb-4">{editingJobId ? 'Edit Job' : 'Post New Job'}</h3>
                 <form onSubmit={handleJobSubmit} className="space-y-4">
                     <input className="w-full border p-2 rounded" placeholder="Job Title" value={jobForm.title} onChange={e=>setJobForm({...jobForm, title:e.target.value})} required/>
@@ -248,18 +243,30 @@ export default function Dashboard({ session }) {
                     </div>
                     <div className="divide-y divide-gray-100 max-h-[400px] overflow-y-auto">
                         {applications.map(app => (
-                            <div key={app.id} className="p-4 flex items-center justify-between hover:bg-blue-50 transition-colors">
-                                <div 
-                                    className="flex items-center gap-3 cursor-pointer group"
-                                    onClick={() => setSelectedCandidate(app)} // <--- CLICK TO OPEN MODAL
+                            <div key={app.id} className="p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between hover:bg-blue-50 transition-colors gap-4">
+                                
+                                {/* FIXED: THIS IS NOW A BUTTON, NOT TEXT */}
+                                <button 
+                                    className="flex items-center gap-3 text-left group w-full sm:w-auto"
+                                    onClick={() => setSelectedCandidate(app)}
                                 >
-                                    <img src={app.profiles?.avatar_url || `https://ui-avatars.com/api/?name=${app.profiles?.full_name || 'User'}&background=random`} className="w-10 h-10 rounded-full object-cover" />
+                                    <img src={app.profiles?.avatar_url || `https://ui-avatars.com/api/?name=${app.profiles?.full_name || 'User'}&background=random`} className="w-10 h-10 rounded-full object-cover border border-gray-200" />
                                     <div>
-                                        <div className="font-bold text-gray-900 group-hover:text-blue-600">{app.profiles?.full_name || 'Unknown Candidate'}</div>
+                                        <div className="font-bold text-blue-600 group-hover:underline text-lg">
+                                            {app.profiles?.full_name || 'Unknown Candidate'}
+                                        </div>
                                         <div className="text-xs text-gray-500">Applied for: {app.jobs?.title}</div>
                                     </div>
-                                </div>
-                                <a href={app.resume_url} target="_blank" className="text-sm border px-3 py-1 rounded hover:bg-gray-100">Resume ⬇</a>
+                                </button>
+
+                                <a 
+                                    href={app.resume_url} 
+                                    target="_blank" 
+                                    className="flex items-center gap-2 px-3 py-1.5 border border-gray-300 rounded text-sm text-gray-600 hover:bg-gray-100 font-medium whitespace-nowrap"
+                                >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                    Download PDF
+                                </a>
                             </div>
                         ))}
                         {applications.length === 0 && <div className="p-6 text-center text-gray-500">No applications yet.</div>}
@@ -290,8 +297,8 @@ export default function Dashboard({ session }) {
 
       {/* --- MODAL: CANDIDATE PROFILE POPUP --- */}
       {selectedCandidate && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" onClick={() => setSelectedCandidate(null)}>
-            <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl transform transition-all scale-100" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 backdrop-blur-sm" onClick={() => setSelectedCandidate(null)}>
+            <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl transform transition-all scale-100 animate-in fade-in zoom-in duration-200" onClick={e => e.stopPropagation()}>
                 <div className="h-24 bg-blue-600"></div>
                 <div className="px-6 pb-6 relative">
                     <img 
@@ -301,14 +308,14 @@ export default function Dashboard({ session }) {
                     <h2 className="text-2xl font-bold text-gray-900">{selectedCandidate.profiles?.full_name || 'Unnamed Candidate'}</h2>
                     <p className="text-blue-600 font-medium mb-4">{selectedCandidate.profiles?.username || 'Candidate'}</p>
                     
-                    <div className="space-y-3 text-sm text-gray-600 mb-6">
+                    <div className="space-y-3 text-sm text-gray-600 mb-6 border-t pt-4">
                         <div className="flex items-center gap-2">
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                            <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                             {selectedCandidate.profiles?.email}
                         </div>
                         <div className="flex items-center gap-2">
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                            Applying for: <span className="font-bold">{selectedCandidate.jobs?.title}</span>
+                            <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                            Applied for: <span className="font-bold text-gray-900">{selectedCandidate.jobs?.title}</span>
                         </div>
                     </div>
 
@@ -320,7 +327,7 @@ export default function Dashboard({ session }) {
                         >
                             View Resume PDF
                         </a>
-                        <button onClick={() => setSelectedCandidate(null)} className="px-4 py-2.5 border border-gray-300 rounded-lg font-bold hover:bg-gray-50">
+                        <button onClick={() => setSelectedCandidate(null)} className="px-4 py-2.5 border border-gray-300 rounded-lg font-bold hover:bg-gray-50 text-gray-700">
                             Close
                         </button>
                     </div>
