@@ -28,9 +28,9 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       
-      {/* 1. HERO SECTION WITH GRADIENT */}
+      {/* HERO SECTION WITH GRADIENT */}
       <div className="relative bg-gradient-to-br from-blue-700 to-indigo-800 text-white pt-24 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        {/* Decorative background blob */}
+        
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-10 pointer-events-none">
             <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-white blur-3xl"></div>
             <div className="absolute top-1/2 right-0 w-64 h-64 rounded-full bg-blue-400 blur-3xl"></div>
@@ -61,7 +61,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* 2. STATS / TRUST BAR */}
+      
       <div className="bg-white border-b border-gray-100">
         <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-gray-100">
@@ -85,7 +85,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* 3. FEATURED JOBS SECTION */}
+      
       <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-end mb-8">
             <div>
