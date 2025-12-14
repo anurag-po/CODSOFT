@@ -21,15 +21,15 @@ export default function JobDetail({ session }) {
   const handleApply = async (e) => {
     e.preventDefault();
     
-    // CHECKS
+    // Checks
     if (!session) return toast.error('Please login to apply');
-    if (!file) return toast.error('Please upload a resume first.'); // <--- FIXED HERE
+    if (!file) return toast.error('Please upload a resume first.');
 
     setLoading(true);
 
     try {
       // 1. Upload Resume
-      const fileName = `${Date.now()}_${file.name}`; // Now safe because we checked 'file' exists
+      const fileName = `${Date.now()}_${file.name}`;
       const { error: uploadError } = await supabase.storage.from('resumes').upload(fileName, file);
       if (uploadError) throw new Error('Resume Upload Failed: ' + uploadError.message);
 
@@ -43,24 +43,10 @@ export default function JobDetail({ session }) {
       });
       if (dbError) throw new Error('Database Error: ' + dbError.message);
 
-      // 3. Send Email (Fail-safe)
-      try {
-        axios.post('https://job-board-api-rc22.onrender.com/api/notify', {
-        employerEmail: job.profiles.email, 
-        jobTitle: job.title,
-        candidateName: session.user.email,
-        resumeUrl
-      }).catch(err => console.warn("Background email failed", err));
-        console.log("Email notification sent.");
-      } catch (emailErr) {
-        console.warn("Email failed to send, but application was saved.", emailErr);
-      }
-
-      // 4. Success!
+      // 3. Success! (No email step)
       toast.success('Application submitted successfully!');
       setFile(null); 
-      // Optional: Clear the file input visually by resetting the form
-      e.target.reset();
+      e.target.reset(); // Clear the file input
       
     } catch (error) {
       console.error(error);
@@ -69,7 +55,6 @@ export default function JobDetail({ session }) {
       setLoading(false);
     }
   };
-
   // SKELETON LOADER
   if (!job) return (
     <div className="max-w-5xl mx-auto px-4 py-8 animate-pulse">
