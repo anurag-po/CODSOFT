@@ -125,29 +125,24 @@ export default function Dashboard({ session }) {
   };
   
   const handleJobDelete = async (id) => {
-    // 1. Ask for confirmation
-    if (!window.confirm("Are you sure? This will delete the job AND all its applications.")) return;
-    
-    try {
-        // 2. First, delete all applications linked to this job
-        const { error: appError } = await supabase
-            .from('applications')
-            .delete()
-            .eq('job_id', id);
-            
-        if (appError) throw appError;
+    if (!window.confirm("Are you sure you want to delete this job?")) return;
 
-        // 3. Then, delete the job itself
-        const { error: jobError } = await supabase
+    try {
+        // We only need to delete the JOB now. 
+        // The database automatically deletes the applications.
+        const { error } = await supabase
             .from('jobs')
             .delete()
             .eq('id', id);
-            
-        if (jobError) throw jobError;
 
-        // 4. Success
-        toast.success('Job and applications deleted.');
-        fetchEmployerData(); // Refresh the list
+        if (error) throw error;
+
+        toast.success('Job deleted successfully.');
+        
+        // IMMEDIATE UI UPDATE:
+        // This removes the job from the screen without waiting for a re-fetch
+        setJobs(jobs.filter(job => job.id !== id)); 
+        
     } catch (error) {
         console.error(error);
         toast.error('Error deleting job: ' + error.message);
