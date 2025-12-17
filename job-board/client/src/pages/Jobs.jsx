@@ -7,7 +7,7 @@ export default function Jobs() {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Added a debouncing delay could be good here, but keeping logic simple as requested
+  
   const fetchJobs = async () => {
     setLoading(true);
     try {
@@ -30,7 +30,7 @@ export default function Jobs() {
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
       
-      {/* Header & Search Section */}
+      {/* Header and Search Section */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Explore Opportunities</h1>
         <p className="text-gray-500 mb-6">Find the perfect role for your career path.</p>
@@ -74,9 +74,9 @@ export default function Jobs() {
             <div key={job.id} className="group bg-white p-6 rounded-xl border border-gray-200 hover:border-blue-400 hover:shadow-md transition-all duration-200">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     
-                    {/* Left Side: Info */}
+                    {/* Info */}
                     <div className="flex items-start gap-4">
-                        {/* Company Logo Placeholder */}
+                        {/* Company Logo default */}
                         <div className="hidden sm:flex flex-shrink-0 items-center justify-center h-12 w-12 rounded-lg bg-blue-50 text-blue-600 font-bold text-lg">
                             {job.company.charAt(0)}
                         </div>
@@ -105,7 +105,7 @@ export default function Jobs() {
                         </div>
                     </div>
 
-                    {/* Right Side: Action Button */}
+                    {/* Action Button */}
                     <div className="flex-shrink-0 w-full sm:w-auto">
                         <Link 
                             to={`/jobs/${job.id}`} 
