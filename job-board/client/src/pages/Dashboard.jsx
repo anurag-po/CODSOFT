@@ -8,7 +8,7 @@ export default function Dashboard({ session }) {
   const [applications, setApplications] = useState([]); 
   const [myApplications, setMyApplications] = useState([]);
   
-  // States for Profile & Job Forms
+  // States for Profile and Job Forms
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [avatarFile, setAvatarFile] = useState(null);
@@ -19,7 +19,7 @@ export default function Dashboard({ session }) {
   
   const [selectedCandidate, setSelectedCandidate] = useState(null);
 
-  // --- NEW: ONBOARDING STATE ---
+  
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [updatingRole, setUpdatingRole] = useState(false);
 
@@ -30,7 +30,7 @@ export default function Dashboard({ session }) {
   const fetchAllData = async () => {
     try {
       setLoading(true);
-      // 1. Fetch Profile
+      
       const { data: profileData } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
       
       if (profileData) {
@@ -41,11 +41,11 @@ export default function Dashboard({ session }) {
             website: profileData.website || '' 
           });
 
-          // CHECK: DOES USER HAVE A ROLE?
+          // check if user has role
           if (!profileData.role) {
-              setShowRoleModal(true); // <--- SHOW SELECTION MODAL
+              setShowRoleModal(true); 
           } else {
-              // Only fetch data if we know who they are
+              
               if (profileData.role === 'employer') {
                   await fetchEmployerData();
               } else {
@@ -60,7 +60,7 @@ export default function Dashboard({ session }) {
     }
   };
 
-  // --- NEW: ROLE SELECTION HANDLER ---
+ 
   const setUserRole = async (role) => {
       try {
           setUpdatingRole(true);
@@ -84,7 +84,7 @@ export default function Dashboard({ session }) {
       }
   };
 
-  // --- DATA FETCHING ---
+  
   const fetchEmployerData = async () => {
     const { data: jobData } = await supabase.from('jobs').select('*').eq('employer_id', session.user.id).order('created_at', { ascending: false });
     setJobs(jobData || []);
@@ -105,7 +105,7 @@ export default function Dashboard({ session }) {
     setMyApplications(data || []);
   };
 
-  // --- PROFILE UPDATES ---
+  
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
     try {
@@ -123,7 +123,7 @@ export default function Dashboard({ session }) {
             full_name: profileForm.full_name,
             username: profileForm.username,
             avatar_url: avatarUrl,
-            // updated_at: new Date() // Keeping this commented out if you didn't add the column
+            
         }).eq('id', session.user.id);
 
         if (error) throw error;
@@ -137,7 +137,7 @@ export default function Dashboard({ session }) {
     }
   };
 
-  // --- JOB HANDLERS ---
+  
   const handleJobSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -157,7 +157,7 @@ export default function Dashboard({ session }) {
   const handleJobDelete = async (id) => {
     if (!window.confirm("Delete this job?")) return;
     try {
-        // Simple Delete (Assuming Cascade is ON in Database)
+      
         const { error } = await supabase.from('jobs').delete().eq('id', id);
         if (error) throw error;
         toast.success('Job deleted.');
@@ -171,7 +171,7 @@ export default function Dashboard({ session }) {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 space-y-8 relative">
       
-      {/* --- SECTION 1: PROFILE CARD --- */}
+  
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div className="bg-gradient-to-r from-blue-600 to-indigo-700 h-32"></div>
         <div className="px-6 pb-6 relative">
@@ -196,7 +196,7 @@ export default function Dashboard({ session }) {
         </div>
       </div>
 
-      {/* --- SECTION 2: CONTENT --- */}
+   
       {profile.role === 'employer' ? (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-1 bg-white p-6 rounded-xl shadow-sm border border-gray-200 h-fit sticky top-4">
@@ -258,7 +258,7 @@ export default function Dashboard({ session }) {
         </div>
       )}
 
-      {/* --- NEW: ROLE SELECTION MODAL (BLOCKING) --- */}
+    
       {showRoleModal && (
         <div className="fixed inset-0 z-50 bg-gray-900 bg-opacity-95 flex items-center justify-center p-4 backdrop-blur-sm">
             <div className="bg-white rounded-2xl max-w-lg w-full p-8 shadow-2xl text-center animate-in zoom-in duration-300">
@@ -294,7 +294,7 @@ export default function Dashboard({ session }) {
         </div>
       )}
 
-      {/* --- CANDIDATE MODAL --- */}
+   
       {selectedCandidate && (
         <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-40" onClick={() => setSelectedCandidate(null)}>
             <div className="bg-white rounded-2xl w-full max-w-md p-6" onClick={e => e.stopPropagation()}>
