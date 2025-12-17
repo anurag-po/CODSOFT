@@ -28,7 +28,7 @@ export default function Dashboard({ session }) {
   const fetchAllData = async () => {
     try {
       setLoading(true);
-      // Fetch Profile
+      
       const { data: profileData } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
       setProfile(profileData);
       setProfileForm({ 
@@ -37,7 +37,7 @@ export default function Dashboard({ session }) {
         website: profileData.website || '' 
       });
 
-      //Fetch Role-Specific Data
+      
       if (profileData.role === 'employer') {
           await fetchEmployerData();
       } else {
@@ -52,11 +52,11 @@ export default function Dashboard({ session }) {
 
   
   const fetchEmployerData = async () => {
-    // Get Jobs
+   
     const { data: jobData } = await supabase.from('jobs').select('*').eq('employer_id', session.user.id).order('created_at', { ascending: false });
     setJobs(jobData || []);
 
-    // Get Applications
+   
     if (jobData && jobData.length > 0) {
         const jobIds = jobData.map(j => j.id);
         const { data: appData } = await supabase
@@ -88,7 +88,7 @@ export default function Dashboard({ session }) {
             avatarUrl = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/avatars/${fileName}`;
         }
 
-        //Update Profile Table
+       
         const { error } = await supabase.from('profiles').update({
             full_name: profileForm.full_name,
             username: profileForm.username,
@@ -128,8 +128,7 @@ export default function Dashboard({ session }) {
     if (!window.confirm("Are you sure you want to delete this job?")) return;
 
     try {
-        // We only need to delete the JOB now. 
-        // The database automatically deletes the applications.
+      
         const { error } = await supabase
             .from('jobs')
             .delete()
@@ -139,8 +138,7 @@ export default function Dashboard({ session }) {
 
         toast.success('Job deleted successfully.');
         
-        // IMMEDIATE UI UPDATE:
-        // This removes the job from the screen without waiting for a re-fetch
+        
         setJobs(jobs.filter(job => job.id !== id)); 
         
     } catch (error) {
