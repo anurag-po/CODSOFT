@@ -110,7 +110,7 @@ export default function JobDetail({ session }) {
                     <h1 className="text-3xl font-bold text-gray-900 mb-2">{job.title}</h1>
                     <div className="flex flex-wrap gap-4 text-sm text-gray-500 mb-6">
                         
-                        {/* Company Name is a button to show company details*/}
+                        {/* Company Name - a button to show company details*/}
                         <button 
                             onClick={() => setShowCompanyModal(true)}
                             className="flex items-center hover:text-blue-600 hover:underline transition-colors group"
