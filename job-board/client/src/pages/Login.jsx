@@ -29,13 +29,13 @@ export default function Login() {
     }
   };
 
-  // --- NEW: GOOGLE LOGIN FUNCTION ---
+  
   const handleGoogleLogin = async () => {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          // This tells Supabase where to send the user back to after Google login
+          
           redirectTo: window.location.origin 
         }
       });
@@ -44,7 +44,7 @@ export default function Login() {
       toast.error(error.message);
     }
   };
-  // ----------------------------------
+  
 
   return (
     <div className="flex items-center justify-center min-h-[80vh] px-4">
@@ -104,7 +104,7 @@ export default function Login() {
           </button>
         </form>
 
-        {/* --- NEW: DIVIDER AND GOOGLE BUTTON --- */}
+        
         <div className="mt-6">
             <div className="relative">
                 <div className="absolute inset-0 flex items-center">
@@ -129,7 +129,7 @@ export default function Login() {
               Google
             </button>
         </div>
-        {/* -------------------------------------- */}
+        
 
         {/* Footer */}
         <div className="mt-6 text-center">
